@@ -26,6 +26,7 @@
 [data-theme=light] .menu,[data-theme=light] .fixpanel,[data-theme=light] .pop,[data-theme=light] dialog{box-shadow:0 24px 60px -16px rgba(14,17,30,.35)}
 *{box-sizing:border-box}
 html{scrollbar-color:rgba(var(--fg),.25) transparent}
+html,body{overflow-x:clip;max-width:100%}
 body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font:400 16px/1.5 var(--font);-webkit-font-smoothing:antialiased}
 #backdrop{position:fixed;inset:-14%;z-index:0;background-size:cover;background-position:center;filter:blur(80px) saturate(1.8) brightness(.62);opacity:0;transition:opacity 1s;pointer-events:none}
 #backdrop.on{opacity:1}
@@ -200,7 +201,7 @@ dialog textarea{min-height:64px;resize:vertical}
   .top{grid-template-columns:1fr auto;gap:18px 12px}
   .search{grid-column:1/-1;grid-row:2}
   .desk{grid-template-columns:1fr;gap:22px;margin-top:22px}
-  .stage{top:0;z-index:8;margin:0 -14px;padding:10px 14px 12px;border-radius:0 0 26px 26px;border:1px solid rgba(var(--fg),.14);border-top:0;background:rgba(var(--fg),.06);-webkit-backdrop-filter:blur(26px) saturate(1.6);backdrop-filter:blur(26px) saturate(1.6);box-shadow:0 16px 40px -22px rgba(0,0,0,.55)}
+  .stage{top:calc(env(safe-area-inset-top,0px) + 8px);z-index:8;margin:0;padding:10px 12px 12px;border-radius:24px;border:1px solid rgba(var(--fg),.14);background:rgba(var(--bgc),.38);-webkit-backdrop-filter:blur(34px) saturate(1.7);backdrop-filter:blur(34px) saturate(1.7);box-shadow:0 16px 40px -22px rgba(0,0,0,.55)}
   .video{aspect-ratio:auto;height:min(52vw,26vh)}
   .novideo{aspect-ratio:auto;min-height:52px;padding:8px}
   .stage h1{margin-top:10px;font-size:15px;-webkit-line-clamp:1}
@@ -223,15 +224,38 @@ dialog textarea{min-height:64px;resize:vertical}
   .page:not(.study) .row{text-align:center;padding:16px 0}
   .page:not(.study) .margin{justify-content:center}
   .page:not(.study) .orig{font-size:25px;line-height:1.25}
-  .page:not(.study) .ink{font-size:22px;line-height:1.3}
+  .page:not(.study) .ink{font-size:22px;line-height:1.3;font-weight:800;letter-spacing:-.4px}
   /* telefono, "Traduco io": testo a sinistra, un po' più grande, e più respiro sopra */
   .study .orig{font-size:21px}
   .study .answer{font-size:18px;min-height:50px}
-  .hint{margin-top:22px;line-height:1.5}
+  .hint{margin-top:4px;line-height:1.5}
+  .sheet{padding:4px 0 28px}
   .tools{margin-top:16px;gap:14px 20px}
   .answer{font-size:16px;padding:8px 11px;border-radius:12px}
   .col.r{padding-right:0}.pen{display:none}
   .menu,.fixpanel{width:min(330px,88vw)}
+  /* iPhone ingrandisce la pagina sui campi con testo sotto i 16px: tutti a 16px */
+  input,select,textarea,.search input,.answer,.subrow input,.fixpanel input,.fixpanel select,.menu .field input,.pop input,dialog textarea,dialog input,dialog.dict .addword input,.dtools input,select.speed{font-size:16px!important}
+  /* finestre (dizionario, progressi) più compatte */
+  dialog,dialog.dict{width:calc(100vw - 20px);max-width:none;padding:18px 16px 18px;border-radius:20px}
+  dialog h2,.dhead h2{font-size:20px}
+  .x{width:32px;height:32px;font-size:19px}
+  dialog.dict .addword{margin-top:12px;padding:4px;border-radius:14px;gap:4px;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto}
+  dialog.dict .addword .btn{width:40px;padding:0;font-size:24px;font-weight:600;line-height:1}
+  dialog.dict .addword .lbl{display:none}
+  dialog.dict .addword .plus{display:inline}
+  dialog.dict .addword input{padding:0 10px}
+  dialog.dict .addword input,dialog.dict .addword .btn{height:40px;border-radius:11px}
+  .dtools{margin-top:12px}.dtools input,.dtools button{height:36px}
+  .wlwrap{margin-top:10px}
+  .wordlist{max-height:56vh}
+  .wordlist .wrow{padding:9px 38px 9px 12px;gap:1px 10px}
+  .wordlist b,.wordlist .m{font-size:15px}
+  .wordlist small{font-size:12px}
+  .wordlist .sec{padding:5px 12px;font-size:12px}
+  .az button{font-size:10px}
+  .lvl{gap:12px;margin-top:12px}.lvlnum{width:52px;height:52px;border-radius:16px;font-size:25px}.lvlname{font-size:21px}
+  .plist b{font-size:15px}
 }
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 
@@ -256,7 +280,8 @@ dialog.dict .addword .btn{height:44px;padding:0 20px;border-radius:13px}
 .dtools button:hover{background:var(--soft)}
 .dtools button[aria-pressed=true]{background:var(--text);border-color:var(--text);color:var(--inv)}
 @media (hover:none){.wordlist .del{opacity:1}}
-@media (max-width:700px){dialog.dict .addword{grid-template-columns:1fr}}
+
+.addword .plus{display:none}
 .wlwrap{display:grid;grid-template-columns:minmax(0,1fr) 26px;gap:8px;margin-top:14px}
 .wordlist{position:relative;list-style:none;margin:0;padding:0;max-height:50vh;overflow-y:auto;scrollbar-width:thin;border-radius:16px;background:var(--soft)}
 .wordlist .sec{position:sticky;top:0;z-index:1;padding:7px 16px;background:var(--panel);border-bottom:1px solid var(--line);font-size:13px;font-weight:800;color:var(--mid)}
@@ -480,7 +505,7 @@ dialog.dict .addword .btn{height:44px;padding:0 20px;border-radius:13px}
   <form class="addword" id="addWord">
     <input id="newWord" placeholder="Parola nuova" aria-label="Parola" autocomplete="off">
     <input id="newMeaning" placeholder="Cosa vuol dire" aria-label="Significato" autocomplete="off">
-    <button class="btn main" type="submit">Aggiungi</button>
+    <button class="btn main" type="submit" aria-label="Aggiungi"><span class="lbl">Aggiungi</span><span class="plus" aria-hidden="true">+</span></button>
   </form>
   <div class="dtools" id="dictTools">
     <input id="wordFilter" type="search" placeholder="Cerca tra le tue parole" aria-label="Cerca tra le tue parole" autocomplete="off">
@@ -1047,26 +1072,28 @@ function highlight(time){
   $('currentEn').textContent=(view==='toOrig'||view==='gaps')&&!open?'…':s.en;
   $('currentIt').textContent=view==='toIt'&&!open?'…':(s.it||'');
   const row=rows[ix], typingElsewhere=document.activeElement&&document.activeElement.closest?.('.row')&&document.activeElement.closest('.row')!==row;
-  if(row&&isPlaying()&&!typingElsewhere){
+  if(row&&isPlaying()&&!typingElsewhere&&!(TOUCH&&view!=='read')){
     const r=row.getBoundingClientRect(), top=window.innerWidth<=980?300:170;
     if(r.top<top||r.bottom>window.innerHeight-90)row.scrollIntoView({block:'center',behavior:'smooth'});
   }
 }
+const TOUCH=(()=>{try{return matchMedia('(hover: none)').matches;}catch{return false;}})();
 function studyTick(t){
   if(view==='read'||source==='clock'||!$('studyPause').checked||activeIndex<0||activeIndex===studySkip)return;
   const s=transcript[activeIndex];if(!s||isDone(s,activeIndex))return;
   if(t>=s.end-.4&&isPlaying()){
     studySkip=activeIndex;studyPaused=activeIndex;pauseSong();
-    const field=lines.children[activeIndex]?.querySelector('.answer,.gap,.bank .chip');if(field)field.focus();
+    if(!TOUCH){const field=lines.children[activeIndex]?.querySelector('.answer,.gap,.bank .chip');if(field)field.focus();}
   }
 }
 function afterAnswer(i,stay=false){
   recordProgress();updateStats();lastCount=-1;updatePlayer();saveSession();
   if(studyPaused===i){studyPaused=-1;playSong();return;}
-  if(stay)return;
+  if(stay||TOUCH)return;
   for(let k=i+1;k<lines.children.length;k++){const f=lines.children[k].querySelector('.answer,.gap,.bank .chip');if(f){f.focus({preventScroll:true});break;}}
 }
 function checkRow(i,reveal=false,stay=false){
+  const keepY=window.scrollY;
   const s=transcript[i], row=lines.children[i];if(!s||!row)return;
   if(view==='gaps'){gapState(s).revealed=true;}
   else{
@@ -1082,6 +1109,7 @@ function checkRow(i,reveal=false,stay=false){
   }
   if(document.activeElement&&row.contains(document.activeElement))document.activeElement.blur();
   refreshRow(i,true);
+  if(TOUCH){window.scrollTo(0,keepY);requestAnimationFrame(()=>window.scrollTo(0,keepY));setTimeout(()=>window.scrollTo(0,keepY),350);}
   if(reveal){updateStats();lastCount=-1;updatePlayer();saveSession();}
   else{
     const a=view==='toIt'?ans(s):null;
@@ -1435,7 +1463,7 @@ function init(){
       a.text=a.pick.map(k=>toks[k]).join(' ');
       if(pick&&a.pick.length===toks.length){checkRow(i);return;}
       refreshRow(i,true);saveSession();
-      const next=lines.children[i].querySelector('.bank .chip');if(next)next.focus({preventScroll:true});
+      if(!TOUCH){const next=lines.children[i].querySelector('.bank .chip');if(next)next.focus({preventScroll:true});}
       return;
     }
     if(t.closest('.usemine')){s.it=ans(s).text;s.by='me';tm.set(langCode(),lineKey(s.en),s.it,true);refreshRow(i);lastCount=-1;updatePlayer();saveSession();toast('Fatto: da ora uso la tua traduzione.');return;}
