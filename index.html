@@ -15,11 +15,9 @@
   --fg:255,255,255; --bgc:11,11,14; --bg:#0b0b0e; --inv:#0b0b0e; --panel:#1d1d22; --text:#ffffff;
   --mid:rgba(var(--fg),.68); --dim:rgba(var(--fg),.34); --line:rgba(var(--fg),.12); --soft:rgba(var(--fg),.08); --glass:rgba(var(--fg),.07);
   --ok:#62e3a4; --so:#ffd166; --low:#ff9086; --warn:#ffb4ab; --red:#e8222b;
-  --it:#ffd36b; --itdim:rgba(255,211,107,.5);
   --font:"Figtree",system-ui,-apple-system,"Segoe UI Variable","Segoe UI",Roboto,sans-serif;
 }
 :root[data-theme=light]{
-  --it:#9a5b00; --itdim:rgba(154,91,0,.55);
   --fg:14,17,30; --bgc:250,250,252; --bg:#fafafc; --inv:#ffffff; --panel:#ffffff; --text:#0e111e;
   --mid:rgba(var(--fg),.66); --dim:rgba(var(--fg),.4); --glass:rgba(255,255,255,.6); --warn:#c62828; --low:#e5484d;
 }
@@ -53,7 +51,7 @@ option{background:var(--panel);color:var(--text)}
 .go{height:36px;padding:0 20px;border:0;border-radius:999px;background:var(--text);color:var(--inv);font-weight:700;font-size:14px}
 .go:hover{transform:scale(1.03)}
 .top nav{position:relative;display:flex;align-items:center;justify-content:flex-end;gap:6px}
-#ytSearch,#more summary{padding:8px 14px;border-radius:999px;font-size:14px;font-weight:500;color:var(--mid);text-decoration:none;white-space:nowrap}
+#ytSearch,#more summary,.navbtn{padding:8px 14px;border:0;background:none;border-radius:999px;font:500 14px/1.4 var(--font);color:var(--mid);text-decoration:none;white-space:nowrap}
 #ytSearch:hover,#more summary:hover,#more[open] summary{background:var(--soft);color:var(--text)}
 #more summary{list-style:none;cursor:pointer}
 #more summary::-webkit-details-marker,#fix summary::-webkit-details-marker{display:none}
@@ -176,6 +174,10 @@ body.empty .desk{display:block}
 body.empty .stage,body.empty .page-head{display:none}
 body.empty .sheet{padding-bottom:0}
 
+.mhead{display:none}
+.menu #ytSearch{color:var(--text);font-weight:400}
+.win:focus,.win:focus-visible{outline:none}
+.win .dhead{margin-bottom:4px}
 .pop{position:absolute;z-index:6;width:268px;padding:16px;background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:0 24px 60px -12px #000c}
 .pop strong{display:block;font-size:18px;font-weight:800;letter-spacing:-.3px}
 .pop input{display:block;width:100%;margin-top:10px;height:40px;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:var(--soft);font-size:16px}
@@ -227,8 +229,8 @@ dialog textarea{min-height:64px;resize:vertical}
   .page:not(.study) .row{text-align:center;padding:16px 0}
   .page:not(.study) .margin{justify-content:center}
   .page:not(.study) .orig{font-size:25px;line-height:1.25}
-  .page:not(.study) .ink{font-size:22px;line-height:1.3;font-weight:800;letter-spacing:-.4px;color:var(--itdim)}
-  .page:not(.study) .row.active .ink{color:var(--it)}
+  .page:not(.study) .ink{font-size:22px;line-height:1.3;font-weight:600;letter-spacing:-.3px;color:rgba(var(--fg),.26)}
+  .page:not(.study) .row.active .ink{color:rgba(var(--fg),.7)}
   /* telefono, "Traduco io": testo a sinistra, un po' più grande, e più respiro sopra */
   .study .orig{font-size:21px}
   .study .answer{font-size:18px;min-height:50px}
@@ -242,12 +244,14 @@ dialog textarea{min-height:64px;resize:vertical}
   /* iPhone ingrandisce la pagina sui campi con testo sotto i 16px: tutti a 16px */
   input,select,textarea,.search input,.answer,.subrow input,.fixpanel input,.fixpanel select,.menu .field input,.pop input,dialog textarea,dialog input,dialog.dict .addword input,.dtools input,select.speed{font-size:16px!important}
   /* finestre (dizionario, progressi) più compatte */
-  dialog,dialog.dict.dict{width:calc(100vw - 20px);max-width:none;padding:18px 16px 18px;border-radius:20px}
-  dialog.dict.dict{position:fixed;inset:auto 0 0 0;width:auto;max-width:none;margin:0;padding:10px 18px calc(18px + env(safe-area-inset-bottom,0px));border-radius:26px 26px 0 0;border-width:1px 0 0;max-height:88vh}
-  dialog.dict.dict::before{content:"";display:block;width:38px;height:5px;margin:0 auto 12px;border-radius:3px;background:rgba(var(--fg),.22)}
-  dialog.dict[open]{animation:sheet .28s cubic-bezier(.2,.8,.2,1)}
-  dialog.dict:focus,dialog.dict:focus-visible{outline:none}
-  dialog.dict .x:focus:not(:focus-visible){outline:none}
+  dialog,dialog.dict.dict,.menu{width:calc(100vw - 28px);max-width:none;max-height:80vh;padding:18px 16px 20px;border-radius:24px;background:var(--panel);border:1px solid var(--line);box-shadow:0 30px 70px -20px #000}
+  dialog::backdrop{background:rgba(0,0,0,.45);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+  dialog[open]{animation:pop .22s cubic-bezier(.2,.8,.2,1)}
+  .menu{position:fixed;left:14px;right:14px;top:50%;width:auto;transform:translateY(-50%);z-index:41;overflow-y:auto;animation:popm .22s cubic-bezier(.2,.8,.2,1)}
+  #more[open]::before{content:"";position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.45);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+  .mhead{display:flex;padding:0 0 6px 12px}
+  .menu>button,.menu>a{padding:12px 12px;font-size:16px}
+  .menu .field{padding:10px 12px;font-size:14px}
   .dempty{display:block;padding:14px 0 4px;text-align:center;font-size:14px;line-height:1.45;color:var(--mid)}
   .dempty b{display:block;margin-bottom:4px;font-size:16px;color:var(--text)}
   dialog h2,.dhead h2{font-size:20px}
@@ -269,7 +273,8 @@ dialog textarea{min-height:64px;resize:vertical}
   .lvl{gap:12px;margin-top:12px}.lvlnum{width:52px;height:52px;border-radius:16px;font-size:25px}.lvlname{font-size:21px}
   .plist b{font-size:15px}
 }
-@keyframes sheet{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+@keyframes pop{from{transform:scale(.96);opacity:0}to{transform:none;opacity:1}}
+@keyframes popm{from{transform:translateY(-50%) scale(.96);opacity:0}to{transform:translateY(-50%);opacity:1}}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 
 /* dizionario */
@@ -318,11 +323,11 @@ dialog.dict .addword .btn{height:44px;padding:0 20px;border-radius:13px}
 @media (hover:none){.wordlist .del{opacity:1}}
 /* livelli */
 .lvl{display:flex;align-items:center;gap:16px;margin-top:16px}
-.lvlnum{flex:none;width:68px;height:68px;border-radius:22px;background:#ffc533;color:#0b1220;display:grid;place-items:center;font-size:32px;font-weight:800;letter-spacing:-1px}
+.lvlnum{flex:none;width:68px;height:68px;border-radius:22px;background:var(--text);color:var(--inv);display:grid;place-items:center;font-size:32px;font-weight:800;letter-spacing:-1px}
 .lvlname{margin:0;font-size:27px;font-weight:800;line-height:1.15;letter-spacing:-.6px}
 .lvl p.sub{margin:3px 0 0}
 .bar{height:8px;margin-top:18px;border-radius:999px;background:var(--soft);overflow:hidden}
-.bar i{display:block;height:100%;width:0;border-radius:999px;background:#ffc533;transition:width .5s}
+.bar i{display:block;height:100%;width:0;border-radius:999px;background:var(--text);transition:width .5s}
 .lvlnext{margin:9px 0 0;font-size:14px;line-height:1.45;color:var(--mid)}
 .psec{margin:24px 0 0;font-size:13px;font-weight:600;color:var(--dim)}
 .psec+.plist{margin-top:4px}
@@ -400,11 +405,12 @@ dialog.dict .addword .btn{height:44px;padding:0 20px;border-radius:13px}
       <button class="go" type="submit">Apri</button>
     </form>
     <nav>
-      <button type="button" class="navbtn" id="openProgress">Progressi <b id="totalPts">Liv. 1</b></button>
-      <button type="button" class="navbtn" id="openWords">Dizionario <span id="wordCount"></span></button>
+      <button type="button" class="navbtn" id="openProgress">Progressi<b id="totalPts" hidden>Liv. 1</b></button>
+      <button type="button" class="navbtn" id="openWords">Dizionario<span id="wordCount" hidden></span></button>
       <details id="more">
         <summary>Altro</summary>
         <div class="menu">
+          <div class="dhead mhead"><h2>Altro</h2><button type="button" class="x" id="closeMore" aria-label="Chiudi">×</button></div>
           <button type="button" id="exportTxt" disabled>Scarica la traduzione (.txt)</button>
           <a id="ytSearch" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer">Cerca la canzone su YouTube</a>
           <hr>
@@ -512,7 +518,7 @@ dialog.dict .addword .btn{height:44px;padding:0 20px;border-radius:13px}
   <label>Secondi<input type="number" step="0.1" id="offsetInput" value="0"></label>
   <div class="btns"><button type="button" class="btn" id="cancelOffset">Annulla</button><button type="button" class="btn main" id="applyOffset">Sposta</button></div>
 </dialog>
-<dialog id="wordsDlg" class="dict" aria-labelledby="wordsTitle" tabindex="-1">
+<dialog id="wordsDlg" class="dict win" aria-labelledby="wordsTitle" tabindex="-1">
   <div class="dhead"><h2 id="wordsTitle">Dizionario</h2><span class="count" id="wordsCount"></span><button type="button" class="x" id="closeWords" aria-label="Chiudi il dizionario">×</button></div>
   <p class="sub" id="wordsSub"></p>
   <form class="addword" id="addWord">
@@ -526,14 +532,14 @@ dialog.dict .addword .btn{height:44px;padding:0 20px;border-radius:13px}
   </div>
   <div class="wlwrap" id="wlWrap"><ul class="wordlist" id="wordList"></ul><nav class="az" id="azIndex" aria-label="Vai alla lettera"></nav></div>
 </dialog>
-<dialog id="progressDlg" aria-labelledby="progressTitle">
-  <h2 id="progressTitle">I tuoi progressi</h2>
+<dialog id="progressDlg" class="win" aria-labelledby="progressTitle" tabindex="-1">
+  <div class="dhead"><h2 id="progressTitle">Progressi</h2><button type="button" class="x" id="closeProgressX" aria-label="Chiudi i progressi">×</button></div>
   <div class="lvl"><span class="lvlnum" id="lvlNum">1</span><div><p class="lvlname" id="lvlName"></p><p class="sub" id="progressSub"></p></div></div>
   <div class="bar"><i id="lvlBar"></i></div>
   <p class="lvlnext" id="lvlNext"></p>
   <p class="psec" id="songsHead">Canzone per canzone</p>
   <ul class="plist" id="progressList"></ul>
-  <div class="btns"><button type="button" class="btn" id="resetProgress">Azzera i progressi</button><button type="button" class="btn main" id="closeProgress">Chiudi</button></div>
+  <div class="btns"><button type="button" class="textbtn" id="resetProgress">Azzera i progressi</button><button type="button" id="closeProgress" hidden></button></div>
 </dialog>
 <div class="toast" id="toast" hidden></div>
 
@@ -1611,8 +1617,12 @@ function init(){
   $('historyMore').addEventListener('click',()=>{historyOpen=!historyOpen;drawHistory();});
   drawHistory();
   $('home').addEventListener('click',(e)=>{e.preventDefault();goHome();});
-  $('openProgress').addEventListener('click',()=>{$('resetProgress').dataset.sure='';$('resetProgress').textContent='Azzera i progressi';drawProgress();$('progressDlg').showModal();});
+  $('openProgress').addEventListener('click',()=>{$('resetProgress').dataset.sure='';$('resetProgress').textContent='Azzera i progressi';drawProgress();$('progressDlg').showModal();$('progressDlg').focus();});
   $('closeProgress').addEventListener('click',()=>$('progressDlg').close());
+  $('closeProgressX').addEventListener('click',()=>$('progressDlg').close());
+  $('closeMore').addEventListener('click',(e)=>{e.stopPropagation();$('more').open=false;});
+  $('more').addEventListener('click',(e)=>{if(e.target===$('more'))$('more').open=false;});
+  for(const d of ['progressDlg','wordsDlg'])$(d).addEventListener('click',(e)=>{if(e.target===$(d))$(d).close();});
   $('resetProgress').addEventListener('click',(e)=>{
     if(e.target.dataset.sure!=='1'){e.target.dataset.sure='1';e.target.textContent='Sicuro? Clicca ancora per azzerare';return;}
     progress={songs:{}};store.set('pix.progress',progress);e.target.dataset.sure='';e.target.textContent='Azzera i progressi';drawProgress();showTotal();drawHistory();updateStats();
