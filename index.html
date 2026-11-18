@@ -197,9 +197,9 @@ dialog textarea{min-height:64px;resize:vertical}
 @media (hover:none){.pen,.time{opacity:1}}
 @media (max-width:980px){
   .wrap{padding:12px 14px 60px}
-  .top{grid-template-columns:1fr auto;gap:10px 12px}
+  .top{grid-template-columns:1fr auto;gap:18px 12px}
   .search{grid-column:1/-1;grid-row:2}
-  .desk{grid-template-columns:1fr;gap:14px;margin-top:14px}
+  .desk{grid-template-columns:1fr;gap:22px;margin-top:22px}
   .stage{top:0;z-index:8;margin:0 -14px;padding:10px 14px 12px;border-radius:0 0 22px 22px;border-width:0 0 1px;background:rgba(var(--bgc),.84)}
   .video{aspect-ratio:auto;height:min(52vw,26vh)}
   .novideo{aspect-ratio:auto;min-height:52px;padding:8px}
@@ -208,10 +208,17 @@ dialog textarea{min-height:64px;resize:vertical}
   .transport{margin-top:0}
   .play{width:46px;height:46px;font-size:15px}
   .now{display:none}
-  .cols,.row{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 14px}
-  .cols span:first-child{grid-column:1}
-  .margin{grid-column:1/-1;flex-direction:row;align-items:center;padding:0 0 2px}
-  .orig,.ink{font-size:18px;letter-spacing:-.2px}
+  .headline{justify-content:center;gap:10px}
+  .hint,.tools{justify-content:center;text-align:center}
+  .tools .seg{margin:0 auto}
+  .cols{display:none}
+  .row{grid-template-columns:minmax(0,1fr);gap:0;padding:12px 0}
+  .margin{flex-direction:row;align-items:center;padding:0 0 4px}
+  .col.r{margin-top:4px}
+  .orig,.ink{font-size:19px;letter-spacing:-.2px}
+  .ink{color:var(--mid)}
+  .row.active .ink{color:var(--text)}
+  .study .col.r{margin-top:8px}
   .answer{font-size:16px;padding:8px 11px;border-radius:12px}
   .col.r{padding-right:0}.pen{display:none}
   .menu,.fixpanel{width:min(330px,88vw)}
@@ -1147,6 +1154,7 @@ async function oembedTitle(id){
   }
   return {title:'',author:''};
 }
+function noCaptions(){try{ytPlayer.unloadModule('captions');}catch{}try{ytPlayer.unloadModule('cc');}catch{}}
 function videoReady(){if(ytWaiter){const f=ytWaiter;ytWaiter=null;f();}}
 /* Apre un video. Se il lettore esiste gia' lo riusa, cosi' cambiare canzone non lo ricrea da capo. */
 function loadVideo(id){
@@ -1165,10 +1173,10 @@ function loadVideo(id){
     loadYoutubeAPI().then(()=>{
       if(source!=='youtube'||id!==ytId){videoReady();return;}
       ytPlayer=new YT.Player('youtubePlayer',{height:'100%',width:'100%',videoId:id,
-        playerVars:{playsinline:1,rel:0,controls:1,enablejsapi:1,origin:/^https?:$/.test(location.protocol)?location.origin:undefined},
+        playerVars:{playsinline:1,rel:0,controls:1,enablejsapi:1,cc_load_policy:0,iv_load_policy:3,origin:/^https?:$/.test(location.protocol)?location.origin:undefined},
         events:{
-          onReady:()=>{if(source!=='youtube')return;ytReady=true;$('play').disabled=false;$('seek').disabled=false;$('speed').value='1';audioDuration=songDuration();updatePlayer();if(!ytTicker)ytTicker=setInterval(updatePlayer,250);videoReady();},
-          onStateChange:(e)=>{if(source!=='youtube')return;setPlayIcon(e.data===YT.PlayerState.PLAYING);if(e.data===5)videoReady();updatePlayer();},
+          onReady:()=>{noCaptions();if(source!=='youtube')return;ytReady=true;$('play').disabled=false;$('seek').disabled=false;$('speed').value='1';audioDuration=songDuration();updatePlayer();if(!ytTicker)ytTicker=setInterval(updatePlayer,250);videoReady();},
+          onStateChange:(e)=>{if(e.data===1||e.data===3)noCaptions();if(source!=='youtube')return;setPlayIcon(e.data===YT.PlayerState.PLAYING);if(e.data===5)videoReady();updatePlayer();},
           onError:(e)=>{
             const why=({'2':'Il link non è valido.','5':'Il lettore ha dato errore.','100':'Questo video non è più disponibile.','101':'Chi ha pubblicato il video non permette di vederlo fuori da YouTube: prova un altro video della stessa canzone.','150':'Chi ha pubblicato il video non permette di vederlo fuori da YouTube: prova un altro video della stessa canzone.','153':'YouTube non riesce a far partire questo video qui: riprova, oppure aprilo su YouTube.'})[String(e.data)]||'Questo video non si può riprodurre qui.';
             if(e.data===101||e.data===150)enterClock(ytId);else videoNote(why);
@@ -1527,6 +1535,7 @@ function init(){
   $('gradSeg').innerHTML=Object.keys(GRAD_NAMES).map(g=>`<button type="button" data-grad="${g}" title="${GRAD_NAMES[g]}" aria-label="Sfondo: ${GRAD_NAMES[g]}"${GRADS[g]?` style="background-image:${GRADS[g]}"`:''}>${g==='song'?'♪':g==='none'?'∅':''}</button>`).join('');
   $('gradSeg').addEventListener('click',(e)=>{const b=e.target.closest('[data-grad]');if(!b)return;gradient=b.dataset.grad;store.set('pix.gradient',gradient);applyBackdrop();});
   window.addEventListener('pagehide',()=>{if(dirty.size)pushData(true);});
+  try{if(!FROM_APP&&navigator.storage&&navigator.storage.persist)navigator.storage.persist();}catch{}
   applyTheme(store.get('pix.theme',document.documentElement.dataset.theme));applyBackdrop();showTotal();setPlayIcon(false);
   $('coverWords').addEventListener('click',()=>{const on=$('wordList').classList.toggle('cover');$('coverWords').textContent=on?'Mostra i significati':'Ripassa';$('coverWords').setAttribute('aria-pressed',String(on));$('wordList').querySelectorAll('.m').forEach(m=>m.classList.remove('seen'));});
   $('wordList').addEventListener('click',(e)=>{
