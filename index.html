@@ -323,11 +323,11 @@ dialog.dict .addword .btn{height:44px;padding:0 20px;border-radius:13px}
 @media (hover:none){.wordlist .del{opacity:1}}
 /* livelli */
 .lvl{display:flex;align-items:center;gap:16px;margin-top:16px}
-.lvlnum{flex:none;width:68px;height:68px;border-radius:22px;background:var(--text);color:var(--inv);display:grid;place-items:center;font-size:32px;font-weight:800;letter-spacing:-1px}
+.lvlnum{flex:none;width:68px;height:68px;border-radius:22px;background:var(--lv,#ffc533);color:#0b1220;display:grid;place-items:center;font-size:32px;font-weight:800;letter-spacing:-1px}
 .lvlname{margin:0;font-size:27px;font-weight:800;line-height:1.15;letter-spacing:-.6px}
 .lvl p.sub{margin:3px 0 0}
 .bar{height:8px;margin-top:18px;border-radius:999px;background:var(--soft);overflow:hidden}
-.bar i{display:block;height:100%;width:0;border-radius:999px;background:var(--text);transition:width .5s}
+.bar i{display:block;height:100%;width:0;border-radius:999px;background:var(--lv,#ffc533);transition:width .5s}
 .lvlnext{margin:9px 0 0;font-size:14px;line-height:1.45;color:var(--mid)}
 .psec{margin:24px 0 0;font-size:13px;font-weight:600;color:var(--dim)}
 .psec+.plist{margin-top:4px}
@@ -392,6 +392,24 @@ dialog.dict .addword .btn{height:44px;padding:0 20px;border-radius:13px}
 .addword input{min-width:0;height:42px;padding:0 12px;border:1px solid var(--line);border-radius:12px;background:var(--soft);font-size:15px}
 .addword input:focus{outline:none;border-color:rgba(var(--fg),.6)}
 @media (max-width:980px){.brand svg{height:38px}.navbtn,#more summary{padding:6px 9px;font-size:13px}.top nav{gap:0}.addword{grid-template-columns:1fr}}
+
+/* dizionario, versione pulita */
+dialog.dict.dict .addword{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) 44px;gap:10px;margin:18px 0 0;padding:0;background:none;border-radius:0}
+dialog.dict.dict .addword input{height:44px;padding:0 14px;border:1px solid var(--line);border-radius:12px;background:transparent;font-size:16px}
+dialog.dict.dict .addword input:focus{outline:none;border-color:rgba(var(--fg),.55)}
+dialog.dict.dict .addword .btn{width:44px;height:44px;padding:0;border:1px solid var(--line);border-radius:12px;background:transparent;color:var(--text);font-size:22px;font-weight:400;line-height:1}
+dialog.dict.dict .addword .btn:hover{background:var(--soft)}
+dialog.dict.dict .addword .lbl{display:none}
+dialog.dict.dict .addword .plus{display:inline}
+dialog.dict.dict .dtools{margin-top:12px}
+dialog.dict.dict .wordlist{background:none;border-radius:0}
+dialog.dict.dict .wordlist .sec{padding:14px 2px 4px;background:var(--panel);border-bottom:0;font-size:12px;font-weight:700;color:var(--dim)}
+dialog.dict.dict .wordlist .wrow{padding:11px 40px 11px 2px;border-bottom:1px solid var(--line);background:none}
+dialog.dict.dict .wordlist .wrow:hover{background:none}
+dialog.dict.dict .wordlist .wrow:last-child{border-bottom:0}
+dialog.dict.dict .wordlist b{font-weight:700}
+dialog.dict.dict .wordlist .m{color:var(--mid)}
+dialog.dict.dict .wordlist .del{right:0}
 </style>
 </head>
 <body>
@@ -919,6 +937,7 @@ function songPoints(){let p=0,done=0,sum=0,n=0;for(const s of transcript){const 
 const fmtPts=(n)=>{const v=Math.round((Number(n)||0)*2)/2;return Number.isInteger(v)?String(v):v.toFixed(1).replace('.',',');};
 const totalPoints=()=>Object.values(progress.songs).reduce((t,x)=>t+(Number(x?.best)||0),0);
 const RANKS=[[0,'Orecchio curioso'],[150,'Canticchiatore'],[500,'Voce da doccia'],[1200,'Corista'],[2500,'Star del karaoke'],[4500,'Solista'],[7500,'Voce da palco'],[12000,'Headliner'],[18000,'Idolo delle folle'],[26000,'Leggenda']];
+const RANK_COLORS=['#ffc533','#ff9f43','#ff6b6b','#f368e0','#a66bff','#5f8bff','#22c3e6','#2ed59f','#9be15d','linear-gradient(135deg,#ffd36b,#ff6b6b 50%,#a66bff)'];
 function rank(pts){let i=0;while(i+1<RANKS.length&&pts>=RANKS[i+1][0])i++;return {n:i+1,name:RANKS[i][1],from:RANKS[i][0],next:RANKS[i+1]||null};}
 function showTotal(){const r=rank(totalPoints());$('totalPts').textContent='Liv. '+r.n;$('openProgress').title='Livello '+r.n+': '+r.name;}
 function recordProgress(){
@@ -935,6 +954,7 @@ function recordProgress(){
 function drawProgress(){
   const list=Object.values(progress.songs).filter(x=>x&&typeof x==='object').sort((a,b)=>(b.date||0)-(a.date||0));
   const pts=totalPoints(), r=rank(pts);
+  $('progressDlg').style.setProperty('--lv',RANK_COLORS[r.n-1]||RANK_COLORS[0]);
   $('lvlNum').textContent=String(r.n);$('lvlName').textContent=r.name;
   $('progressSub').textContent=`Livello ${r.n} di ${RANKS.length}`+(pts?`, con ${fmtPts(pts)} punti in tutto`:'');
   $('lvlBar').style.width=(r.next?Math.max(3,Math.min(100,(pts-r.from)/(r.next[0]-r.from)*100)):100)+'%';
